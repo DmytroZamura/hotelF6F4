@@ -38,13 +38,7 @@ class TestContact(unittest.TestCase):
 
     def test_eq(self):
         """Тестуємо порівняння двох Contact за паспортом."""
-        new_params = self.base_parameters.copy()
-        new_params.update({
-            "passport": "AX044844"
-        })
-        contact2 = Contact(
-            **new_params,
-        )
+        contact2 = Contact(**{**self.base_parameters, "passport": "AX044844"})
 
         self.assertEqual(contact2, self.contact)
         self.assertEqual(self.contact == contact2, True)
@@ -59,76 +53,31 @@ class TestContact(unittest.TestCase):
     def test_empty_or_wrong_type_name_validation(self):
         """Тестування валідації порожнього імені при створенні Contact."""
         with self.assertRaises(ValueError) as context:
-            new_params = self.base_parameters.copy()
-            new_params.update({
-                "name": ""
-            })
-            Contact(
-                **new_params
-            )
+            Contact(**{**self.base_parameters, "name": ""})
         self.assertIn("Ім'я контакту не може бути порожнім", str(context.exception))
 
         with self.assertRaises(TypeError) as context:
-            new_params = self.base_parameters.copy()
-            new_params.update({
-                "name": 12123412
-            })
-            Contact(
-                **new_params
-            )
+            Contact(**{**self.base_parameters, "name": 12123412})
             self.assertIn("Ім'я контакту має бути типу str", str(context.exception))
 
 
     def test_invalid_email_validation(self):
         """Тестування валідації невалідного email при створенні Contact."""
         with self.assertRaises(ValueError) as context:
-            new_params = self.base_parameters.copy()
-            new_params.update({
-                "email": "invalid-email"
-            })
-            Contact(
-                "Василь Швидкий",
-                "invalid-email",
-                "+3349853454",
-                "AX044842"
-            )
+            Contact(**{**self.base_parameters, "email": "invalid-email"})
         self.assertIn("Невалідна email адреса", str(context.exception))
 
         with self.assertRaises(TypeError) as context:
-            new_params = self.base_parameters.copy()
-            new_params.update({
-                "email": 12312
-            })
-            Contact(
-                "Василь Швидкий",
-                123211,
-                "+3349853454",
-                "AX044842"
-            )
+            Contact(**{**self.base_parameters, "email": 12312})
 
     def test_invalid_phone_validation(self):
         with self.assertRaises(ValueError) as context:
-            new_params = self.base_parameters.copy()
-            new_params.update({
-                "phone": "invalid-phone"
-            })
-            Contact(
-                **new_params
-            )
+            Contact(**{**self.base_parameters, "phone": "invalid-phone"})
             self.assertIn("Номер телефона має бути від 8 до 15 цифр, може починатися с '+'", str(context.exception))
 
     def test_invalid_passport_validation(self):
         """Тестування валідації """
         with self.assertRaises(ValueError) as context:
-            new_params = self.base_parameters.copy()
-            new_params.update({
-                "passport": ""
-            })
-            Contact(
-                "Василь Швидкий",
-                "v@gnail.com",
-                "+3349853454",
-                ""
-            )
+            Contact(**{**self.base_parameters, "passport": ""})
 
 

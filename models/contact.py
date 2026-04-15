@@ -11,6 +11,7 @@ class Contact:
         self.passport = validate_non_empty_string(passport, "Номер паспорта")
 
     def __repr__(self):
+        """Офіційне представлення Contact для розробників."""
         return f"Contact(name={self.name!r}, email={self.email!r}, phone={self.phone!r}, passport={self.passport!r})"
 
     def __str__(self):
