@@ -1,0 +1,40 @@
+{# Картка окремого номера (include-шаблон) #}
+<div class="room-card">
+    <h3>{{ room_type }} №{{ room.number }}</h3>
+
+    {# Статусна мітка #}
+    {% if room.status.name == "FREE" %}
+        <span class="status status-free">🟢 Вільний</span>
+    {% elif room.status.name == "OCCUPIED" %}
+        <span class="status status-occupied">🔴 Зайнятий</span>
+    {% else %}
+        <span class="status status-reserved">🟡 Зарезервований</span>
+    {% endif %}
+
+    <p class="price">{{ room.price_per_night }} грн/ніч</p>
+    <p class="description">{{ room.description }}</p>
+
+    {# Зручності #}
+    {% if room.amenities %}
+    <ul class="amenities">
+        {% for a in room.amenities %}
+        <li title="{{ a.description }}">{{ a.name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {# Галерея фото номера #}
+    {% if room.photos %}
+    <div class="room-gallery">
+        {% for photo in room.photos %}
+        <img src="{{ photo }}" alt="Фото номера №{{ room.number }}">
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Поточний гість #}
+    {% if current_guest %}
+    <p style="margin-top:0.5rem"><strong>Гість:</strong> {{ current_guest }}</p>
+    {% endif %}
+</div>
+

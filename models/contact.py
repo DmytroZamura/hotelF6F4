@@ -1,6 +1,8 @@
+from utils.data_utils import register_class
 from utils.validators import validate_non_empty_string, validate_email, validate_phone_number
 
 
+@register_class
 class Contact:
     """Клас для представлення контактної інформації користувача."""
 

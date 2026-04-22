@@ -60,7 +60,6 @@ class TestContact(unittest.TestCase):
             Contact(**{**self.base_parameters, "name": 12123412})
             self.assertIn("Ім'я контакту має бути типу str", str(context.exception))
 
-
     def test_invalid_email_validation(self):
         """Тестування валідації невалідного email при створенні Contact."""
         with self.assertRaises(ValueError) as context:
@@ -81,3 +80,5 @@ class TestContact(unittest.TestCase):
             Contact(**{**self.base_parameters, "passport": ""})
 
 
+if __name__ == "__main__":
+    unittest.main()

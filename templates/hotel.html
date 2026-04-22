@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ hotel.name }} — Звіт</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>🏨 {{ hotel.name }}</h1>
+
+    {# Галерея фото готелю #}
+    {% if hotel.photos %}
+    <div class="gallery">
+        {% for photo in hotel.photos %}
+        <img src="{{ photo }}" alt="Фото готелю">
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Статистика #}
+    <div class="stats">
+        <p>Номерів: {{ total }} | Вільних: {{ free }} | Зайнятих: {{ occupied }} | Зарезервованих: {{ reserved }}</p>
+        <p>Загальний дохід: {{ revenue }} грн</p>
+    </div>
+
+    <h2>Номери</h2>
+    <div class="rooms-grid">
+        {% for room_data in rooms_data %}
+            {% with room=room_data.room, room_type=room_data.type, current_guest=room_data.current_guest %}
+                {% include "room.html" %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+</body>
+</html>
+
