@@ -95,6 +95,28 @@ def validate_phone_number(phone: str) -> str:
     return phone
 
 
+def validate_date_not_past(value: "date", field_name: str = "Дата") -> "date":
+    """Перевірити, що дата не в минулому.
+
+    Args:
+        value: Значення для перевірки.
+        field_name: Назва поля (для повідомлення про помилку).
+
+    Returns:
+        Валідна дата.
+
+    Raises:
+        TypeError: Якщо значення не є типом date.
+        ValueError: Якщо дата в минулому.
+    """
+    from datetime import date
+    if not isinstance(value, date):
+        raise TypeError(f"{field_name} має бути типу date")
+    if value < date.today():
+        raise ValueError(f"{field_name} не може бути в минулому")
+    return value
+
+
 def validate_type(value, expected_type, field_name: str):
     """Перевірити, що значення має ожидаемый тип.
 

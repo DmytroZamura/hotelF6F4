@@ -241,35 +241,30 @@ data/
         └── rooms/
 ```
 
-##### Серіалізація — метод `to_dict()` у кожному класі
-- [ ] `Amenity.to_dict()` → `{"name": "Wi-Fi", "description": "Безкоштовний бездротовий інтернет"}`
-- [ ] `Guest.to_dict()` → `{"name": "...", "passport": "...", "contact": "...", "history": [...]}`
-- [ ] `Room.to_dict()` → `{"type": "StandardRoom", "number": 101, "price_per_night": 800, "status": "FREE", "description": "...", "amenities": [{"name": "...", "description": "..."}]}`
-- [ ] `Booking.to_dict()` → `{"guest_passport": "...", "room_number": 101, "check_in_date": "2026-04-10", "nights": 3}`
-- [ ] `Hotel.to_dict()` → `{"name": "...", "rooms": [...], "guests": [...], "bookings": [...]}`
+##### Серіалізація та десеріалізація — універсальні утиліти `utils/data_utils.py`
 
-##### Десеріалізація — класметод `from_dict(data)` у кожному класі
-- [ ] `Amenity.from_dict(data) -> Amenity`
-- [ ] `Guest.from_dict(data) -> Guest`
-- [ ] `Room.from_dict(data) -> StandardRoom | DeluxeRoom | Suite` (за полем `"type"`)
-- [ ] `Booking.from_dict(data, rooms, guests) -> Booking` (зв'язує за `room_number` та `guest_passport`)
-- [ ] `Hotel.from_dict(data) -> Hotel`
+> **Замість** індивідуальних `to_dict()` / `from_dict()` у кожному класі використовуємо
+> універсальні функції з `utils/data_utils.py`:
+>
+> - [x] `obj_to_dict(obj)` — рекурсивно конвертує будь-який об'єкт у `dict` через `__dict__`, додає поле `__class__` для відновлення типу.
+> - [x] `dict_to_class(data)` — рекурсивно відновлює об'єкт із `dict` за збереженим `__class__`, викликаючи конструктор `TargetClass(**data)`.
+> - [x] `save_data(file_path, data_object)` — серіалізує об'єкт і записує у JSON-файл (`ensure_ascii=False`, `indent=4`).
+> - [x] `read_data(file_path)` — зчитує JSON-файл і повертає відновлений об'єкт.
+>
+> Це означає, що моделям (`Amenity`, `Guest`, `Room`, `Booking`, `Hotel`) **не потрібні** методи `to_dict()` та `from_dict()`.
+> Єдина вимога — конструктор кожного класу має приймати всі атрибути як іменовані аргументи (`**kwargs`-сумісний).
 
 ##### `HotelStorage` — сервіс збереження/завантаження
 - [ ] `__init__(base_dir: str = "data")` — кореневий каталог для всіх готелів
 - [ ] `_get_hotel_dir(hotel: Hotel) -> Path` — повертає шлях до директорії готелю (`data/{slug}/`); slug формується з назви (транслітерація/lowercase, пробіли → `_`)
 - [ ] `save(hotel: Hotel) -> None`:
   1. Створює директорію `data/{slug}/` якщо не існує
-  2. Записує `hotel.json` — номери зі статусами
-  3. Записує `guests.json` — унікальні гості з бронювань
-  4. Записує `bookings.json` — список бронювань
-  5. Оновлює `data/registry.json` — додає slug якщо його ще немає
-  6. Усі файли: `ensure_ascii=False`, `indent=2`
+  2. Використовує `save_data()` з `utils/data_utils` для запису `hotel.json`, `guests.json`, `bookings.json`
+  3. Оновлює `data/registry.json` — додає slug якщо його ще немає
 - [ ] `load(hotel_slug: str) -> Hotel` — завантажує один готель за slug-ом:
-  1. Читає `data/{slug}/hotel.json` → відновлює номери
-  2. Читає `data/{slug}/guests.json` → відновлює гостей
-  3. Читає `data/{slug}/bookings.json` → відновлює бронювання, зв'язує з номерами та гостями
-  4. Повертає повністю відновлений об'єкт `Hotel`
+  1. Використовує `read_data()` з `utils/data_utils` для зчитування JSON-файлів
+  2. Об'єкти автоматично відновлюються у правильні класи через `dict_to_class()`
+  3. Повертає повністю відновлений об'єкт `Hotel`
 - [ ] `load_all() -> list[Hotel]` — завантажує всі готелі з `registry.json`
 - [ ] `list_hotels() -> list[str]` — повертає список slug-ів зареєстрованих готелів
 - [ ] `delete(hotel_slug: str) -> None` — видаляє директорію готелю та прибирає з реєстру
@@ -375,7 +370,7 @@ data/{slug}/media/
 ##### Інтеграція медіа у моделі
 - [ ] `Room.photos: list[str]` — список відносних шляхів до фото (заповнюється при `load()`)
 - [ ] `Hotel.photos: list[str]` — фото самого готелю
-- [ ] У `Room.to_dict()` / `Hotel.to_dict()` — поле `"photos"` зі списком імен файлів
+- [ ] Поле `photos` серіалізується автоматично через `obj_to_dict()` — додаткові методи не потрібні
 
 #### 4.6 Генерація HTML-звіту (`services/report.py`)
 

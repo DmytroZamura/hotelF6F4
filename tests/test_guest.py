@@ -92,3 +92,6 @@ class TestGuest(unittest.TestCase):
             Guest(contact=self.contact, birthday=None)
         self.assertIn("Дата народження гостя має бути типу date", str(context.exception))
 
+
+if __name__ == "__main__":
+    unittest.main()

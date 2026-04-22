@@ -1,8 +1,10 @@
 from models.contact import Contact
+from utils.data_utils import register_class
 from utils.validators import validate_type
 from datetime import date
 
 
+@register_class
 class Guest:
     """Клас, для гостя готелю."""
 

@@ -1,5 +1,8 @@
+from utils.data_utils import register_class
 from utils.validators import validate_non_empty_string
 
+
+@register_class
 class Amenity:
     """Клас для додавання зручностей до готелю"""
     def __init__(self, name: str, description: str) -> None:
